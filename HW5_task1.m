@@ -1,23 +1,17 @@
-trainSet = glob('train/**/*.jpg');
-testSet = glob('test/**/*.jpg');
+trainSetNames = glob('train/**/*.jpg');
+testSetNames = glob('test/**/*.jpg');
 
 tinySize = 16;
-trainLength = length(trainSet);
-trainVectors = zeros(trainLength, tinySize*tinySize);
-for i = 1:trainLength
-    orignalImage = imread(char(trainSet(i)));
-    scaleImage = imresize(orignalImage, [tinySize tinySize]);
-    reshapImage = reshape(scale_image, 1, []);
-    disp(class(trainVectors(i)));
-    disp(class(reshapImage));
-end
+trainlabelNum = 100;
+textLabelNum = 10;
 
-numData = 5000;
-dimension = 2;
-data = rand(dimension, numData);
+trainLength = length(trainSetNames);
+[trainSet, trainLabel] = tinyImages(trainSetNames, tinySize, trainlabelNum);
+[testSet, testLabel] = tinyImages(testSetNames, tinySize, textLabelNum);
 
-numClusters = 30;
-[centers, assignemtns] = vl_kmeans(data, numClusters);
+kNum = 5;
+
+Mdl = fitcknn(trainSetNames, trainLabel,'NumNeighbors', kNum);
 
 figure
 hold on;
