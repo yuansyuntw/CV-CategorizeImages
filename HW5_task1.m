@@ -1,29 +1,26 @@
-trainSet = glob('train/**/*.jpg');
-testSet = glob('test/**/*.jpg');
+trainSetNames = glob('train/**/*.jpg');
+testSetNames = glob('test/**/*.jpg');
 
 tinySize = 16;
-trainLength = length(trainSet);
-trainVectors = zeros(trainLength, tinySize*tinySize);
-for i = 1:trainLength
-    orignalImage = imread(char(trainSet(i)));
-    scaleImage = imresize(orignalImage, [tinySize tinySize]);
-    reshapImage = reshape(scale_image, 1, []);
-    disp(class(trainVectors(i)));
-    disp(class(reshapImage));
-end
+trainlabelNum = 100;
+textLabelNum = 10;
 
-numData = 5000;
-dimension = 2;
-data = rand(dimension, numData);
+trainLength = length(trainSetNames);
+[trainSet, trainLabel] = tinyImages(trainSetNames, tinySize, trainlabelNum);
+[testSet, testLabel] = tinyImages(testSetNames, tinySize, textLabelNum);
 
-numClusters = 30;
-[centers, assignemtns] = vl_kmeans(data, numClusters);
+kNum = 1;
+accuracy = myKNN(trainSet, trainLabel, testSet, testLabel, kNum, false);
+fprintf('k = %d, acc = %f\n', kNum, accuracy);
 
-figure
-hold on;
-scatter(data(1,:), data(2,:), 18, 'MarkerFaceColor', [0 0 0]);
-scatter(centers(1,:), centers(2,:), 144, 'MarkerFaceColor', [0 0.7 0.7]);
-title 'Fisher''s Iris Data';
-xlabel 'Petal Lengths (cm)'; 
-ylabel 'Petal Widths (cm)';
-hold off;
+kNum = 5;
+accuracy = myKNN(trainSet, trainLabel, testSet, testLabel, kNum, false);
+fprintf('k = %d, acc = %f\n', kNum, accuracy);
+
+kNum = 15;
+accuracy = myKNN(trainSet, trainLabel, testSet, testLabel, kNum, false);
+fprintf('k = %d, acc = %f\n', kNum, accuracy);
+
+kNum = 20;
+accuracy = myKNN(trainSet, trainLabel, testSet, testLabel, kNum, false);
+fprintf('k = %d, acc = %f\n', kNum, accuracy);
