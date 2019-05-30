@@ -11,16 +11,10 @@ trainLength = length(trainSetNames);
 
 kNum = 1;
 accuracy = myKNN(trainSet, trainLabel, testSet, testLabel, kNum, false);
-fprintf('k = %d, acc = %f\n', kNum, accuracy);
+disp(kNum + ' acc = ' + accuracy);
 
-kNum = 5;
+kNum = 1;
 accuracy = myKNN(trainSet, trainLabel, testSet, testLabel, kNum, false);
-fprintf('k = %d, acc = %f\n', kNum, accuracy);
 
-kNum = 15;
+kNum = 1;
 accuracy = myKNN(trainSet, trainLabel, testSet, testLabel, kNum, false);
-fprintf('k = %d, acc = %f\n', kNum, accuracy);
-
-kNum = 20;
-accuracy = myKNN(trainSet, trainLabel, testSet, testLabel, kNum, false);
-fprintf('k = %d, acc = %f\n', kNum, accuracy);
