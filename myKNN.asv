@@ -28,12 +28,9 @@ else
            
            d = train - sample;
            
-           % Normal 1
+           % Normal
+           %distances(j, 1) = dist(train, sample');
            distances(j, 1) = sum(abs(d));
-           
-           % Normal 2
-           %distances(j, 1) = sqrt(sum(abs(d).^2));
-           
            distances(j, 2) = trainLabel(j);
         end
 

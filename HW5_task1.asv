@@ -9,7 +9,7 @@ trainLength = length(trainSetNames);
 [trainSet, trainLabels] = tinyImages(trainSetNames, tinySize, trainlabelNum);
 [testSet, testLabels] = tinyImages(testSetNames, tinySize, textLabelNum);
 
-maxKnum = 100;
+maxKnum = 50;
 accuracys = [];
 axis = [];
 index = 1;
@@ -17,13 +17,13 @@ index = 1;
 f = uifigure;
 d = uiprogressdlg(f, 'Title', 'KNN');
 
-for i = 1:1:maxKnum
+for i = 1:10:maxKNum
     a = myKNN(trainSet, trainLabels, testSet, testLabels, i, false, false) * 100;
     accuracys = [accuracys a];
     axis = [axis i];
-    fprintf('k = %d, acc = %.2f%%\n', i, accuracys(index));
+    fprintf('k = %d, acc = %f\%\n', i, accuracys(index));
     index = index + 1;
-    d.Value = updateprogressBar(i/maxKnum);
+    d.Value = floor(i/maxKnum);
 end
 close(f);
 
