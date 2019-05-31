@@ -9,18 +9,27 @@ trainLength = length(trainSetNames);
 [trainSet, trainLabel] = tinyImages(trainSetNames, tinySize, trainlabelNum);
 [testSet, testLabel] = tinyImages(testSetNames, tinySize, textLabelNum);
 
-kNum = 1;
-accuracy = myKNN(trainSet, trainLabel, testSet, testLabel, kNum, false);
-fprintf('k = %d, acc = %f\n', kNum, accuracy);
+maxKNum = 500;
+accuracys = [];
+axis = [];
+index = 1;
 
-kNum = 5;
-accuracy = myKNN(trainSet, trainLabel, testSet, testLabel, kNum, false);
-fprintf('k = %d, acc = %f\n', kNum, accuracy);
+for i = 1:10:maxKNum
+    a = myKNN(trainSet, trainLabel, testSet, testLabel, i, true) * 100;
+    accuracys = [accuracys a];
+    axis = [axis i];
+    fprintf('k = %d, acc = %f%\n', i, accuracys(index));
+    index = index + 1;
+end
 
-kNum = 15;
-accuracy = myKNN(trainSet, trainLabel, testSet, testLabel, kNum, false);
-fprintf('k = %d, acc = %f\n', kNum, accuracy);
+figure 
+plot(axis, accuracys)
+title('CV HW5 Task 1')
+xlabel('k')
+ylabel('accuracy(%)')
 
-kNum = 20;
-accuracy = myKNN(trainSet, trainLabel, testSet, testLabel, kNum, false);
-fprintf('k = %d, acc = %f\n', kNum, accuracy);
+
+
+
+
+
