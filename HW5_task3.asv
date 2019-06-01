@@ -3,46 +3,61 @@ testSetNames = glob('test/**/*.jpg');
 
 trainLabelNum = 100;
 testLabelNum = 10;
-kmeanNum = 300;
-
-[trainSet, trainLabels] = myKmeans(trainSetNames, trainLabelNum, kmeanNum);
-[testSet, testLabels] = myKmeans(testSetNames, testLabelNum, kmeanNum);
-
-trainLabelNum = 100;
-testLabelNum = 10;
-maxKMeanNum = 100;
-knnKNum = 21;
+kmeanNum = 260;
 
 [trainHis, trainIndexs, trainLabels] = getSIFTFeatures(trainSetNames, trainLabelNum);
 [testHis, testIndexs, testLabels] = getSIFTFeatures(testSetNames, testLabelNum);
 
+[kMeansCenters, assignements] = vl_kmeans(single(trainHis), kmeanNum, 'Initialization', 'plusplus');
+[trainSet] = vectorQuantization(trainHis, trainIndexs, kMeansCenters);
+[testSet] = vectorQuantization(testHis, testIndexs, kMeansCenters);
+
 %% prepare for SVM
-lambda = 0.001;
-trainLength = length(trainLabels);
-
-weightArray = []
-biasArray = []
-for i = 1:trainLabelNum
+f= uifigure;
+d = uiprogressdlg(f, 'Title', 'Train SVM');
+categoricalNumber = length(trainLabels)/trainLabelNum;
+SVMWeights = []
+SVMBiass = []
+for i = 1:categoricalNumber
     
-    svmLabels = ones(kmeanNum, trainLength).*-1;
-    for i = 1:trainLength
-       svmLabels(trainLabels(i), i) = 1;
+    labels = ones(length(trainLabels), 1);
+    labels = labels.*-1;
+    
+    for j = ((i-1)*trainLabelNum+1) : (i*trainLabelNum)
+        labels(j) = 1;
     end
-
-    [weight, bias] = vl_svmtrain(trainSet, svmLabels, lambda);
-
+    
+    SVMModels = [SVMModels fitcsvm(trainSet, uint8(labels))];
+    d.Value = updateprogressBar(i/categoricalNumber);
 end
+close(d);
+close(f);
+
 
 %% test the test data set
+f= uifigure;
+d = uiprogressdlg(f, 'Title', 'Testing SVM');
+predictLabel = zeros(testLabels, 1);
 testLength = length(testLabels);
-predicts = zeros(testLength, 1);
-for j = 1:testLength
-   
-    distances = [];
-    for k = 1:kmeanNum
-        
-        distances(k,:) = dot()
-        
-    end
+for i = 1:testLength
     
+    a = []
+    for j = 1:categoricalNumber
+        [label, score, cost] = predict(SVMModels(i), testSet(i));
+        a = [a score]
+    end
+    [p index] = max(a);
+    predictLabel(i) = index;
+    d.Value = updateprogressBar(i/testLength);
 end
+accuracy = getAccuracy(predictLabel, testLabel);
+close(d);
+close(f);
+    
+figure 
+image(accuracys)
+title('CV HW5 Task 3')
+xlabel('CategoricalPredictors')
+ylabel('accuracy(%)')
+
+csvwrite('task3_accuracys_answer.csv', accuracys');
