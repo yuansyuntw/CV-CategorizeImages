@@ -1,4 +1,3 @@
-A = [1 1 1];
-B = [2 2 2];
-norm(B - A)
-
+trainSetNames = glob('train/**/*.jpg');
+I = vl_impattern('roofs1');
+image(I);

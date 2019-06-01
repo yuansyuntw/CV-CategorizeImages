@@ -21,30 +21,15 @@ else
     for i = 1:testSetLength
         
         % calcuate the European distance with label
-        distances = zeros(trainSetLength, 2);
-        for j = 1:trainSetLength
-           sample = testSet(i,:);
-           train = trainSet(j,:);
-           
-           d = train - sample;
-           
-           % Normal 1
-           distances(j, 1) = sum(abs(d));
-           
-           % Normal 2
-           %distances(j, 1) = sqrt(sum(abs(d).^2));
-           
-           distances(j, 2) = trainLabel(j);
-        end
+        distances = vl_alldist2(testSet(i,:)', trainSet', 'L2');
 
         % sort the distance and pick up the k number smaple
-        distances = sortrows(distances, 1);
-        kDistance = distances(1:kNumber,:);
+        [distances, indexArray] = sort(distances);
         
         % vote the label
         voteLabels = zeros(labelNum, 1);
         for k = 1:kNumber
-            index = uint8(kDistance(k,2));
+            index = trainLabel(indexArray(k));
             voteLabels(index) = voteLabels(index) + 1;
         end
         

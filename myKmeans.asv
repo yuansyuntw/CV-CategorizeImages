@@ -1,0 +1,70 @@
+function [dataSet, labels] = myKmeans(inputNames, labelNum, kmenasNum)
+
+f = uifigure;
+d = uiprogressdlg(f, 'Title', 'Get SIFT Features');
+
+% get image descriptor with SIFT
+[dataLength, nameLength] = size(inputNames);
+trainDescroptorNum = [];
+allDescroptors = [];
+labels = zeros(dataLength,1);
+for i = 1:dataLength
+    
+    % get the feature of input image
+	originalImage = vl_imreadgray(char(inputNames(i)));
+    [frame, descriptor] = vl_sift(signle(originalImage), 'PeakThresh', 20, 'edgethresh', 5);
+    
+    % keep the index for vector quantization
+    [descriptorLength, length] = size(descriptor);
+    [descriptorLength, start] = size(allDescroptors);
+    trainDescroptorNum(:,:,i) = [start+1 start+length];
+
+    % for kmeans
+    allDescroptors = [allDescroptors  descriptor];
+    
+    labels(i) = floor((i-1)/labelNum)+1;
+    d.Value = updateprogressBar(i/dataLength);
+    
+    % debug
+    if(i == 1)
+        I = imread()
+        image(char(inputNames(i)));
+        features = vl_plotframe(frame(:,:));
+        set(features, 'color', 'y', 'linewidth', 2);
+    end
+    
+end
+d.Message  = "progress vl_ikmeans...";
+[centers, assignements] = vl_ikmeans(uint8(allDescroptors), kmenasNum);
+close(d);
+close(f);
+
+f = uifigure;
+d = uiprogressdlg(f, 'Title', 'Vector Quantization');
+
+% Vector Quantization
+histograms = [];
+for i=1:dataLength
+   indexs = trainDescroptorNum(:,:,i);
+   
+   h = zeros(kmenasNum,1);
+   for j=indexs(1):indexs(2)
+       oneDescr = int32(allDescroptors(:,j));
+       distance = vl_alldist2(oneDescr, centers);
+       [distance, index] = min(distance);
+       word = index;
+       h(word) = h(word) + 1;
+   end
+
+   % To regularize the histogram
+   h = h - mean(h);
+   histograms(:, i) = h/norm(h);
+   
+   d.Value = updateprogressBar(i/dataLength);
+end
+close(d);
+close(f);
+
+% for myKNN input format
+dataSet = reshape(histograms, [], kmenasNum);
+

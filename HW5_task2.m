@@ -1,13 +1,15 @@
+%% read data
 trainSetNames = glob('train/**/*.jpg');
 testSetNames = glob('test/**/*.jpg');
 
 trainLabelNum = 100;
 testLabelNum = 10;
-kmeanNum = 300;
+kmeanNum = 30;
 
 [trainSet, trainLabels] = myKmeans(trainSetNames, trainLabelNum, kmeanNum);
 [testSet, testLabels] = myKmeans(testSetNames, testLabelNum, kmeanNum);
 
+%% knn
 maxKnum = 100;
 accuracys = [];
 axis = [];
