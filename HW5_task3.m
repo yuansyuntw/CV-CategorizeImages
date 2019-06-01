@@ -3,38 +3,27 @@ testSetNames = glob('test/**/*.jpg');
 
 trainLabelNum = 100;
 testLabelNum = 10;
-kmeanNum = 300;
+kmeanNum = 260;
 
-[trainSet, trainLabels] = myKmeans(trainSetNames, trainLabelNum, kmeanNum);
-[testSet, testLabels] = myKmeans(testSetNames, testLabelNum, kmeanNum);
+[trainHis, trainIndexs, trainLabels] = getSIFTFeatures(trainSetNames, trainLabelNum);
+[testHis, testIndexs, testLabels] = getSIFTFeatures(testSetNames, testLabelNum);
+
+[kMeansCenters, assignements] = vl_kmeans(single(trainHis), kmeanNum, 'Initialization', 'plusplus');
+[trainSet] = vectorQuantization(trainHis, trainIndexs, kMeansCenters);
+[testSet] = vectorQuantization(testHis, testIndexs, kMeansCenters);
 
 %% prepare for SVM
 lambda = 0.001;
-trainLength = length(trainLabels);
-
-weightArray = []
-biasArray = []
-for i = 1:trainLabelNum
-    
-    svmLabels = ones(kmeanNum, trainLength).*-1;
-    for i = 1:trainLength
-       svmLabels(trainLabels(i), i) = 1;
-    end
-
-    [weight, bias] = vl_svmtrain(trainSet, svmLabels, lambda);
-
-end
+SVMModel = fitcsvm(trainSet, trainLabels, lambda);
 
 %% test the test data set
-testLength = length(testLabels);
-predicts = zeros(testLength, 1);
-for j = 1:testLength
-   
-    distances = [];
-    for k = 1:kmeanNum
-        
-        distances(k,:) = dot()
-        
-    end
-    
-end
+predicts = predict(SVMModel, testSet);
+accuracy = getAccuracy(predicts, testLabel);
+
+figure 
+plot(axis, accuracys)
+title('CV HW5 Task 3')
+xlabel('CategoricalPredictors')
+ylabel('accuracy(%)')
+
+csvwrite('task3_accuracys_answer.csv', accuracys');

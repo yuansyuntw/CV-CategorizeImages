@@ -1,0 +1,61 @@
+%% read data
+trainSetNames = glob('train/**/*.jpg');
+testSetNames = glob('test/**/*.jpg');
+
+trainLabelNum = 100;
+testLabelNum = 10;
+maxKMeanNum = 100;
+knnKNum = 5;
+
+%%  get image features
+readFeaturesFromFile = true;
+trainSIFTFeaturesFileName = 'trainSIFT';
+testSIFTFeaturesFileName = 'testSIFT';
+
+if(readFeaturesFromFile == false)
+    [trainHis, trainIndexs, trainLabels] = getSIFTFeatures(trainSetNames, trainLabelNum);
+    csvwrite(trainSIFTFeaturesFileName+'Histogram.csv', trainHis);
+    csvwrite(trainSIFTFeaturesFileName+'Indexs.csv', trainIndexs);
+    csvwrite(trainSIFTFeaturesFileName+'Labels.csv', trainLabels);
+    
+    [testHis, testIndexs, testLabels] = getSIFTFeatures(testSetNames, testLabelNum);
+    csvwrite(testSIFTFeaturesFileName+'Histogram.csv', testHis);
+    csvwrite(testSIFTFeaturesFileName+'Indexs.csv', testIndexs);
+    csvwrite(testSIFTFeaturesFileName+'Labels.csv', testLabels);
+    
+else
+    
+    trainHis = csvread(trainSIFTFeaturesFileName+'Histogram.csv');
+    trainIndexs = 
+    
+end
+
+%% k menas
+
+f = uifigure;
+d = uiprogressdlg(f, 'Title', 'KMenans');
+
+accuracys = [];
+axis = [];
+index = 1;
+for i = 2:10:maxKMeanNum
+    [kMeansCenters] = myKmeans(trainHis, i);
+    [trainSet] = vectorQuantization(trainHis, trainIndexs, kMeansCenters);
+    [testSet] = vectorQuantization(testHis, testIndexs, kMeansCenters);
+    a = myKNN(trainSet, trainLabels, testSet, testLabels, knnKNum, true, false) * 100;
+    accuracys = [accuracys a];
+    axis = [axis i];
+    fprintf('KMeans k = %d, acc = %.2f%%\n', i, accuracys(index));
+    index = index + 1;
+    d.Value = updateprogressBar(i/maxKMeanNum);
+end
+close(d);
+close(f);
+
+figure 
+plot(axis, accuracys)
+title('CV HW5 Task 2')
+xlabel('kmeans k number')
+ylabel('accuracy(%)')
+
+csvwrite('task2_accuracys_answer.csv', accuracys');

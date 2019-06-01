@@ -20,7 +20,7 @@ f = uifigure;
 d = uiprogressdlg(f, 'Title', 'KNN');
 
 for i = 1:1:maxKnum
-    a = myKNN(trainSet, trainLabels, testSet, testLabels, i, true, false) * 100;
+    a = myKNN(trainSet, trainLabels, testSet, testLabels, i, false, false) * 100;
     accuracys = [accuracys a];
     axis = [axis i];
     fprintf('k = %d, acc = %.2f%%\n', i, accuracys(index));
@@ -34,6 +34,8 @@ plot(axis, accuracys)
 title('CV HW5 Task 1')
 xlabel('k')
 ylabel('accuracy(%)')
+
+csvwrite('task1_accuracys_L2.csv', accuracys');
 
 
 
