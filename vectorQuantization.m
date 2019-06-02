@@ -9,8 +9,8 @@ f = uifigure;
 d = uiprogressdlg(f, 'Title', 'Vector Quantization');
 
 histograms = [];
-[~,~, dataLength] = size(trainDescriptorIndexs);
-[~, kmenasNum] = size(kmeansCenters)
+[~, ~, dataLength] = size(trainDescriptorIndexs);
+[~, kmenasNum] = size(kmeansCenters);
 for i=1:dataLength
    indexs = trainDescriptorIndexs(:,:,i);
    startIndex = indexs(1);
@@ -18,7 +18,7 @@ for i=1:dataLength
    h = zeros(kmenasNum,1);
    for j = startIndex:endIndex
        oneDescr = single(allDescriptors(:,j));
-       [distance, index] = min(vl_alldist2(oneDescr, kmeansCenters));
+       [~, index] = min(vl_alldist2(oneDescr, kmeansCenters));
        h(index) = h(index) + 1;
    end
 

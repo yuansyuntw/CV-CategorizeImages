@@ -4,7 +4,7 @@ function [allDescriptors, trainDescriptorIndexs, labels] = getSIFTFeatures(input
 f = uifigure;
 d = uiprogressdlg(f, 'Title', 'Get SIFT Features');
 
-[dataLength, nameLength] = size(inputNames);
+[dataLength, ~] = size(inputNames);
 trainDescriptorIndexs = [];
 allDescriptors = [];
 labels = zeros(dataLength,1);
@@ -15,8 +15,8 @@ for i = 1:dataLength
     [frame, descriptor] = vl_sift(single(originalImage), 'PeakThresh', 0, 'edgethresh', 3.5);
     
     % keep the index for vector quantization
-    [descriptorLength, length] = size(descriptor);
-    [descriptorLength, start] = size(allDescriptors);
+    [~, length] = size(descriptor);
+    [~, start] = size(allDescriptors);
     trainDescriptorIndexs(:,:,i) = [start+1 start+length];
 
     % for kmeans

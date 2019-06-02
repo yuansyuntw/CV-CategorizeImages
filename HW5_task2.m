@@ -8,6 +8,7 @@ minKMeanNum = 260;
 maxKMeanNum = 260;
 knnKNum = 21;
 
+% get input data SIFT features
 [trainHis, trainIndexs, trainLabels] = getSIFTFeatures(trainSetNames, trainLabelNum);
 [testHis, testIndexs, testLabels] = getSIFTFeatures(testSetNames, testLabelNum);
 
