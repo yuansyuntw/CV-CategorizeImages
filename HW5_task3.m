@@ -3,7 +3,7 @@ testSetNames = glob('test/**/*.jpg');
 
 trainLabelNum = 100;
 testLabelNum = 10;
-kmeanNum = 300;
+kmeanNum = 260;
 minLamda = 0.0000001;
 maxLamda = 1;
 
